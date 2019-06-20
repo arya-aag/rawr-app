@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 
-class Products extends StatelessWidget {
-  final List<String> products;
+import './pages/product.dart';
 
-  Products([this.products = const []]) {
+class Products extends StatelessWidget {
+  final List<Map<String, String>> products;
+  final Function deleteProduct;
+
+  Products(this.products, {this.deleteProduct}) {
     print('[Products Widget] Constructor');
   }
 
@@ -11,8 +14,23 @@ class Products extends StatelessWidget {
     return Card(
       child: Column(
         children: <Widget>[
-          Image.asset('assets/food.jpg'),
-          Text(products[index])
+          Image.asset(products[index]['image']),
+          Text(products[index]['title']),
+          ButtonBar(
+            alignment: MainAxisAlignment.center,
+            children: <Widget>[
+              FlatButton(
+                child: Text('Details'),
+                onPressed: () => Navigator.pushNamed<bool>(
+                            context, '/product/' + index.toString())
+                        .then((bool value) {
+                      if (value) {
+                        deleteProduct(index);
+                      }
+                    }),
+              )
+            ],
+          )
         ],
       ),
     );
