@@ -67,7 +67,8 @@ class EnsureVisibleWhenFocusedState extends State<EnsureVisibleWhenFocused> {
     if (position.pixels > viewport.getOffsetToReveal(object, 0.0).offset) {
       // Move down to the top of the viewport
       alignment = 0.0;
-    } else if (position.pixels < viewport.getOffsetToReveal(object, 0.0).offset) {
+    } else if (position.pixels <
+        viewport.getOffsetToReveal(object, 1.0).offset) {
       // Move up to the bottom of the viewport
       alignment = 1.0;
     } else {
