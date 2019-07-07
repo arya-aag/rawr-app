@@ -31,30 +31,34 @@ class ProductCard extends StatelessWidget {
   }
 
   Widget _buildActionButtons(BuildContext context) {
-    return ButtonBar(
-      alignment: MainAxisAlignment.center,
-      children: <Widget>[
-        IconButton(
-          icon: Icon(Icons.info),
-          color: Theme.of(context).accentColor,
-          onPressed: () => Navigator.pushNamed<bool>(
-              context, '/product/' + productIndex.toString()),
-        ),
-        ScopedModelDescendant<MainModel>(
-          builder: (BuildContext context, Widget child, MainModel model) {
-            return IconButton(
-              icon: Icon(model.allProducts[productIndex].isFavorite
-                  ? Icons.favorite
-                  : Icons.favorite_border),
-              color: Colors.red,
-              onPressed: () {
-                model.selectProduct(productIndex);
-                model.toggleProductFavoriteStatus();
-              },
-            );
-          },
-        ),
-      ],
+    return ScopedModelDescendant<MainModel>(
+      builder: (BuildContext context, Widget child, MainModel model) {
+        return ButtonBar(
+            alignment: MainAxisAlignment.center,
+            children: <Widget>[
+              IconButton(
+                icon: Icon(Icons.info),
+                color: Theme.of(context).accentColor,
+                onPressed: () {
+                  model.selectProduct(model.allProducts[productIndex].id);
+                  Navigator
+                      .pushNamed<bool>(context,
+                          '/product/' + model.allProducts[productIndex].id)
+                      .then((_) => model.selectProduct(null));
+                },
+              ),
+              IconButton(
+                icon: Icon(model.allProducts[productIndex].isFavorite
+                    ? Icons.favorite
+                    : Icons.favorite_border),
+                color: Colors.red,
+                onPressed: () {
+                  model.selectProduct(model.allProducts[productIndex].id);
+                  model.toggleProductFavoriteStatus();
+                },
+              ),
+            ]);
+      },
     );
   }
 
@@ -63,10 +67,17 @@ class ProductCard extends StatelessWidget {
     return Card(
       child: Column(
         children: <Widget>[
-          Image.asset(product.image),
+          Hero(
+            tag: product.id,
+            child: FadeInImage(
+              image: NetworkImage(product.image),
+              height: 300.0,
+              fit: BoxFit.cover,
+              placeholder: AssetImage('assets/food.jpg'),
+            ),
+          ),
           _buildTitlePriceRow(),
-          AddressTag('Union Square, San Francisco'),
-          Text(product.userEmail),
+          AddressTag(product.location.address),
           _buildActionButtons(context)
         ],
       ),
