@@ -47,6 +47,7 @@ class _MyHomePageState extends State<MyHomePage> {
         tooltip: 'Create Post',
         child: Icon(Icons.add),
       ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );
   }
 }
