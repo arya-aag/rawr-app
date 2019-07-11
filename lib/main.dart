@@ -1,53 +1,34 @@
 import 'package:flutter/material.dart';
 
+import 'package:provider/provider.dart';
+
+import './states/tab_state.dart';
+
+import './pages/home.dart';
 import './pages/create_post.dart';
+import './pages/account_details.dart';
 
 void main() => runApp(RawrApp());
 
 class RawrApp extends StatelessWidget {
+  final Map<String, Widget Function(BuildContext)> _routes = {
+    '/': (context) => HomePage(title: 'Rawr'),
+    '/create-post': (context) => CreatePostPage(),
+    '/profile': (context) => AccountDetailsPage(),
+  };
+
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Rawr',
-      theme: ThemeData(
-        primarySwatch: Colors.teal,
-      ),
-      initialRoute: '/',
-      routes: {
-        '/': (context) => MyHomePage(title: 'Rawr'),
-        '/create-post': (context) => CreatePost(),
-      },
-    );
-  }
-}
-
-class MyHomePage extends StatefulWidget {
-  final String title;
-
-  MyHomePage({Key key, this.title}) : super(key: key);
-
-  @override
-  _MyHomePageState createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
-      ),
-      body: Center(
-        child: Text(
-          'You have landed on the home page!',
+    return ChangeNotifierProvider(
+      builder: (context) => TabState(),
+      child: MaterialApp(
+        title: 'Rawr',
+        theme: ThemeData(
+          primarySwatch: Colors.lightGreen,
         ),
+        initialRoute: '/',
+        routes: _routes,
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => Navigator.pushNamed(context, '/create-post'),
-        tooltip: 'Create Post',
-        child: Icon(Icons.add),
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );
   }
 }
