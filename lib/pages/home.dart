@@ -1,9 +1,5 @@
 import 'package:flutter/material.dart';
 
-import 'package:provider/provider.dart';
-
-import './../states/tab_state.dart';
-
 import './../widgets/bottom_navbar.dart';
 
 class HomePage extends StatefulWidget {
@@ -20,7 +16,6 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
-    Provider.of<TabState>(context).currentIndex = 0;
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
@@ -37,7 +32,7 @@ class _HomePageState extends State<HomePage> {
       //   child: Icon(Icons.add),
       // ),
       // floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      bottomNavigationBar: BottomNavbar(),
+      bottomNavigationBar: BottomNavbar(0),
     );
   }
 }

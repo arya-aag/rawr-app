@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 
-import 'package:provider/provider.dart';
-
-import './../states/tab_state.dart';
-
 class BottomNavbar extends StatefulWidget {
+  final int _currentIndex;
+
+  BottomNavbar(this._currentIndex);
+
   @override
   State<StatefulWidget> createState() {
     return _BottomNavbarState();
   }
 }
 
-class _BottomNavbarState extends State {
+class _BottomNavbarState extends State<BottomNavbar> {
   final List<String> _routes = ['/', '/create-post', '/profile'];
 
   void _onTabTapped(int index) {
@@ -40,10 +40,9 @@ class _BottomNavbarState extends State {
 
   @override
   Widget build(BuildContext context) {
-    TabState _tabState = Provider.of<TabState>(context);
     return BottomNavigationBar(
       onTap: _onTabTapped,
-      currentIndex: _tabState.currentIndex,
+      currentIndex: widget._currentIndex,
       items: _buildNavbarItems([
         {'Home': Icons.home},
         {'Create': Icons.add_circle_outline},

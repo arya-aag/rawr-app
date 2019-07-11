@@ -13,38 +13,48 @@ class _PostEditFormState extends State<PostEditForm> {
 
   @override
   Widget build(BuildContext context) {
-    return Form(
-      key: _formKey,
-      child: Column(
-        children: <Widget>[
-          TextFormField(
-            decoration: InputDecoration(
-              icon: Icon(Icons.title),
-              labelText: 'Title',
+    return Container(
+      // margin: EdgeInsets.all(10.0),
+      child: Form(
+        key: _formKey,
+        child: ListView(
+          padding: EdgeInsets.all(10.0),
+          children: <Widget>[
+            TextFormField(
+              decoration: InputDecoration(
+                icon: Icon(Icons.title),
+                labelText: 'Title',
+              ),
+              validator: (value) {
+                if (value.isEmpty) {
+                  return 'Please enter title of post';
+                }
+                return null;
+              },
             ),
-            validator: (value) {
-              if (value.isEmpty) {
-                return 'Please enter title of post';
-              }
-              return null;
-            },
-          ),
-          SizedBox(
-            height: 10.0,
-          ),
-          RaisedButton(
-            child: Text('Create post'),
-            onPressed: () {
-              if (_formKey.currentState.validate()) {
-                Scaffold.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text('Processing...'),
-                  ),
-                );
-              }
-            },
-          ),
-        ],
+            SizedBox(
+              height: 200.0,
+            ),
+            Center(
+              child: Text('Scroll to bottom!'),
+            ),
+            SizedBox(
+              height: 600.0,
+            ),
+            RaisedButton(
+              child: Text('Create post'),
+              onPressed: () {
+                if (_formKey.currentState.validate()) {
+                  Scaffold.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('Processing...'),
+                    ),
+                  );
+                }
+              },
+            ),
+          ],
+        ),
       ),
     );
   }
