@@ -2,89 +2,143 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 
-import 'package:camera/camera.dart' as cam;
-import 'package:path/path.dart' as p;
-import 'package:path_provider/path_provider.dart' as pp;
+import 'package:image_picker/image_picker.dart';
 
 class ImageCapture extends StatefulWidget {
-  final cam.CameraDescription camera;
-  // final Function setImage;
+  final Function setImage;
 
-  ImageCapture(this.camera);
-  // ImageCapture(this.setImage);
+  ImageCapture(this.setImage);
 
   @override
   _ImageCaptureState createState() => _ImageCaptureState();
 }
 
 class _ImageCaptureState extends State<ImageCapture> {
-  cam.CameraController _camController;
-  Future<void> _initializeControllerFuture;
+  File _imageFile;
 
-  @override
-  void initState() {
-    super.initState();
-    _camController = cam.CameraController(widget.camera, cam.ResolutionPreset.medium);
-    _initializeControllerFuture = _camController.initialize();
-  }
-
-  @override
-  void dispose() {
-    _camController.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text('Take a picture')),
-      body: FutureBuilder<void>(
-        future: _initializeControllerFuture,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.done) {
-            return cam.CameraPreview(_camController);
-          } else {
-            return Center(child: CircularProgressIndicator());
-          }
-        },
-      ),
-      floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.camera_alt),
-        onPressed: () async {
-          try {
-            await _initializeControllerFuture;
-            final path = p.join(
-              (await pp.getTemporaryDirectory()).path,
-              'IMG_${DateTime.now()}.jpg',
-            );
-
-            await _camController.takePicture(path);
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => DisplayPictureScreen(imagePath: path),
-              ),
-            );
-          } catch (e) {
-            print(e);
-          }
-        },
-      ),
+  void _getImage(BuildContext context, ImageSource source) {
+    ImagePicker.pickImage(source: source).then(
+      (File imgFile) {
+        setState(() {
+          _imageFile = imgFile;
+        });
+        widget.setImage(imgFile);
+      },
     );
   }
-}
 
-// A widget that displays the picture taken by the user.
-class DisplayPictureScreen extends StatelessWidget {
-  final String imagePath;
+  void _openImagePicker(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return Container(
+          height: 150.0,
+          padding: EdgeInsets.all(10.0),
+          child: Column(children: [
+            Text(
+              'Pick an Image',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+            SizedBox(
+              height: 10.0,
+            ),
+            FlatButton(
+              textColor: Theme.of(context).primaryColor,
+              child: Text('Use Camera'),
+              onPressed: () {
+                _getImage(context, ImageSource.camera);
+                Navigator.pop(context);
+              },
+            ),
+            FlatButton(
+              textColor: Theme.of(context).primaryColor,
+              child: Text('Use Gallery'),
+              onPressed: () {
+                _getImage(context, ImageSource.gallery);
+                Navigator.pop(context);
+              },
+            )
+          ]),
+        );
+      },
+    );
+  }
 
-  const DisplayPictureScreen({Key key, this.imagePath}) : super(key: key);
+  Widget _buildPreviewImage(BuildContext context) {
+    double availableWidth = MediaQuery.of(context).size.width;
+    Widget previewImage = Stack(
+      overflow: Overflow.clip,
+      children: <Widget>[
+        Image.file(
+          _imageFile,
+          fit: BoxFit.cover,
+          width: availableWidth,
+          height: availableWidth - 100.0,
+          alignment: Alignment.center,
+        ),
+        Positioned(
+          top: 10.0,
+          right: -10.0,
+          child: MaterialButton(
+            onPressed: () => _openImagePicker(context),
+            child: Icon(
+              Icons.edit,
+              color: Colors.white54,
+              size: 20.0,
+            ),
+            color: Color.fromARGB(50, 0, 0, 0),
+            shape: CircleBorder(),
+            elevation: 0.0,
+            padding: const EdgeInsets.all(5.0),
+          ),
+        ),
+      ],
+    );
+
+    return previewImage;
+  }
+
+  Widget _buildAddImageBox(BuildContext context) {
+    double availableWidth = MediaQuery.of(context).size.width;
+    Widget addImageBox = Container(
+      width: availableWidth,
+      height: availableWidth - 100.0,
+      child: Center(
+        child: RaisedButton(
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              Icon(
+                Icons.camera_alt,
+                size: 16.0,
+              ),
+              SizedBox(width: 4.0),
+              Text('Add image'),
+            ],
+          ),
+          color: Colors.white,
+          onPressed: () {
+            _openImagePicker(context);
+          },
+        ),
+      ),
+      decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(4.0),
+          gradient: LinearGradient(
+            colors: [Color.fromARGB(20, 0, 0, 0), Color.fromARGB(40, 0, 0, 0)],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+          )),
+    );
+    return addImageBox;
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text('Display the Picture')),
-      body: Image.file(File(imagePath)),
+    return Column(
+      children: <Widget>[
+        _imageFile != null ? _buildPreviewImage(context) : _buildAddImageBox(context),
+      ],
     );
   }
 }

@@ -20,18 +20,18 @@ class _HomePageState extends State<HomePage> {
       appBar: AppBar(
         title: Text(widget.title),
         leading: Icon(Icons.pets),
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(Icons.message),
+            onPressed: () {},
+          ),
+        ],
       ),
       body: Center(
         child: Text(
           'You have landed on the home page!',
         ),
       ),
-      // floatingActionButton: FloatingActionButton(
-      //   onPressed: () => Navigator.pushNamed(context, '/create-post'),
-      //   tooltip: 'Create Post',
-      //   child: Icon(Icons.add),
-      // ),
-      // floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       bottomNavigationBar: BottomNavbar(0),
     );
   }

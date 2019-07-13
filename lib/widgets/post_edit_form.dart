@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 
 import './image_capture.dart';
@@ -12,46 +14,42 @@ class PostEditForm extends StatefulWidget {
 class _PostEditFormState extends State<PostEditForm> {
   final _formKey = GlobalKey<FormState>();
   final _titleTextCtrl = TextEditingController();
+  File _imagePath;
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      // margin: EdgeInsets.all(10.0),
       child: Form(
         key: _formKey,
         child: ListView(
           padding: EdgeInsets.all(10.0),
           children: <Widget>[
+            ImageCapture((value) {
+              print(value);
+            }),
+            SizedBox(
+              height: 10.0,
+            ),
             TextFormField(
               controller: _titleTextCtrl,
               decoration: InputDecoration(
-                icon: Icon(Icons.title),
-                labelText: 'Title',
+                labelText: 'Write a caption...',
               ),
+              minLines: 3,
+              maxLines: 5,
               validator: (value) {
                 if (value.isEmpty) {
-                  return 'Please enter title of post';
+                  return 'Please enter a caption.';
                 }
                 return null;
               },
             ),
             SizedBox(
-              height: 200.0,
-            ),
-            Center(
-              child: Text('Scroll to bottom!'),
+              height: 10.0,
             ),
             RaisedButton(
-              child: Text('Create post'),
-              onPressed: () {
-                Navigator.pushNamed(context, '/capture-image');
-              },
-            ),
-            SizedBox(
-              height: 600.0,
-            ),
-            RaisedButton(
-              child: Text('Create post'),
+              child: Text('Publish!'),
+              color: Theme.of(context).primaryColorLight,
               onPressed: () {
                 if (_formKey.currentState.validate()) {
                   Scaffold.of(context).showSnackBar(
